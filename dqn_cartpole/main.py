@@ -28,6 +28,7 @@ agent = agent.Agent(strategy, env_manage.num_actions_available(), device)
 
 policy_net = DQN.DQN(env_manage.get_screen_height(), env_manage.get_screen_width()).to(device)
 target_net = DQN.DQN(env_manage.get_screen_height(), env_manage.get_screen_width()).to(device)
+print(env_manage.get_screen_height(), env_manage.get_screen_width())
 target_net.load_state_dict(policy_net.state_dict())
 target_net.eval()
 
