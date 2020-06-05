@@ -1,3 +1,3 @@
 # reinforcement learning
 
-Code for some of my reinforcement learning explorations
+code for some of my reinforcement learning explorations!
