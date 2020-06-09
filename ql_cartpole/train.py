@@ -1,5 +1,6 @@
 from env import Env
 from agent import Agent
+import utils
 
 import random
 import pandas as pd
@@ -22,10 +23,11 @@ agent = Agent(
         )
 rewards = deque()
 max_reward = 0
+epsilons = deque()
 
 print("training")
 
-for episode in range(700):
+for episode in range(400):
     env.reset()
     episode_reward = 0
 
@@ -37,6 +39,7 @@ for episode in range(700):
         rewards.clear()
 
     agent.update_epsilon_complicated(episode)
+    epsilons.append(agent.eps)
     # agent.update_epsilon_simple()
 
     for step in range(MAX_STEPS):
@@ -54,6 +57,8 @@ for episode in range(700):
     rewards.append(episode_reward)
     if episode_reward > max_reward:
         max_reward = episode_reward
+
+utils.plot_epsilon(epsilons)
 
 print("testing")
 rewards.clear()
@@ -79,5 +84,8 @@ for episode in range(100):
 
 print("max reward:", max_reward)
 print("average reward:", sum(rewards) / 100)
+
+utils.save_q_table(agent.q_table)
+utils.plot_testing(rewards)
 
 env.close()

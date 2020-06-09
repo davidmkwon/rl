@@ -44,7 +44,7 @@ class Env():
         fourth = np.digitize(x=observation[3], bins=self.pole_velocity_bins)
 
         state = first * 1000 + second * 100 + third * 10 + fourth
-        return state
+        return int(state)
 
     def reset(self):
         self.obs_state = self.env.reset()
