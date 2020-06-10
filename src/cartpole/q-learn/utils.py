@@ -11,6 +11,7 @@ def plot_training(rewards, moving_avg_period=100):
     plt.figure(1)
     plt.xlabel("Episode")
     plt.ylabel("Duration")
+    plt.title("Training")
 
     episodes = [i for i in range(1, len(rewards) + 1)]
     num_1 = plt.plot(episodes, rewards, 'b', label="Episode Reward")
@@ -36,6 +37,7 @@ def plot_testing(rewards):
     plt.figure(2)
     plt.xlabel("Episode")
     plt.ylabel("Duration")
+    plt.title("Testing")
 
     episodes = [i for i in range(1, len(rewards) + 1)]
     num_1 = plt.plot(episodes, rewards, 'm', label="Episode Reward")
