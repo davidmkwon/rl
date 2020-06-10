@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
-import json
+import pickle
 import random
+import math
 from collections import deque
 
 x = [1,2,3,8]
@@ -24,7 +25,8 @@ def plot_training(rewards, moving_avg_period=100):
         avg = sum(avg_queue) / len(avg_queue)
         avg_rewards.append(avg)
         avg_queue.popleft()
-    num_2 = plt.plot(episodes, avg_rewards, '--', label="100 Episode Moving Average")
+    avg_rewards.append(avg_rewards[-1])
+    num_2 = plt.plot(episodes, avg_rewards, 'm', label="100 Episode Moving Average")
 
     plt.savefig("res/training.png", bbox_inches="tight")
     plt.legend()
@@ -57,9 +59,8 @@ def plot_epsilon(epsilons):
     plt.show()
 
 def save_q_table(q_table):
-    q_table_file = open("res/q_table.json", "w")
-    json.dump(q_table, q_table_file)
-    q_table_file.close()
+    with open('res/q_table.pickle', 'wb') as handle:
+        pickle.dump(q_table, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 def dummy(rewards):
     plt.figure(5)
@@ -77,6 +78,3 @@ def dummy(rewards):
     plt.savefig("res/dummy.png", bbox_inches='tight')
     plt.legend()
     plt.show()
-
-rewards = [random.random() for i in range(100)]
-plot_testing(rewards)

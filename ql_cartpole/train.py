@@ -14,33 +14,32 @@ EPSILON = 1
 MIN_EPSILON = 0.1
 EPSILON_DECAY = 0.001
 
-NUM_EPISODES = 2000
+NUM_EPISODES = 500
 MAX_STEPS = 200
 
 env = Env('CartPole-v0')
 agent = Agent(
         eps=EPSILON,gamma=GAMMA,alpha=ALPHA,num_actions=env.num_actions
         )
-rewards = deque()
+rewards = []
 max_reward = 0
 epsilons = deque()
 
 print("training")
 
-for episode in range(400):
+for episode in range(NUM_EPISODES):
     env.reset()
     episode_reward = 0
 
     if episode % 100 == 99:
-        avg_reward = sum(rewards) / 100
+        avg_reward = sum(rewards[(episode - 98) : episode]) / 99
         print("EPISODE {}\naverage reward: {}".format(episode, avg_reward))
         print("current max reward: {}".format(max_reward))
         print("length of table: {}\nepsilon value: {}\n".format(len(agent.q_table,), agent.eps))
-        rewards.clear()
 
     agent.update_epsilon_complicated(episode)
-    epsilons.append(agent.eps)
     # agent.update_epsilon_simple()
+    epsilons.append(agent.eps)
 
     for step in range(MAX_STEPS):
         curr_state = env.state
@@ -59,33 +58,6 @@ for episode in range(400):
         max_reward = episode_reward
 
 utils.plot_epsilon(epsilons)
-
-print("testing")
-rewards.clear()
-max_reward = 0
-agent.eps = 0
-
-for episode in range(100):
-    env.reset()
-    episode_reward = 0
-
-    for step in range(MAX_STEPS):
-        curr_state = env.state
-        action = agent.select_action(curr_state)
-        new_state, reward, _, _ = env.play_action(action)
-        episode_reward += reward
-
-        if env.done:
-            break
-
-    rewards.append(episode_reward)
-    if episode_reward > max_reward:
-        max_reward = episode_reward
-
-print("max reward:", max_reward)
-print("average reward:", sum(rewards) / 100)
-
+utils.plot_training(rewards)
 utils.save_q_table(agent.q_table)
-utils.plot_testing(rewards)
-
 env.close()

@@ -5,7 +5,7 @@ import numpy as np
 
 class Agent():
     
-    def __init__(self, eps, gamma, alpha, num_actions):
+    def __init__(self, eps=1, gamma=0.9, alpha=0.1, num_actions=2):
         self.eps = eps
         self.eps_min = 0.1
         self.eps_max = 1
