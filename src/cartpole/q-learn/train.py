@@ -38,7 +38,6 @@ for episode in range(NUM_EPISODES):
         print("length of table: {}\nepsilon value: {}\n".format(len(agent.q_table,), agent.eps))
 
     agent.update_epsilon_complicated(episode)
-    # agent.update_epsilon_simple()
     epsilons.append(agent.eps)
 
     for step in range(MAX_STEPS):

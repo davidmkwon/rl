@@ -4,9 +4,6 @@ import random
 import math
 from collections import deque
 
-x = [1,2,3,8]
-y = [4,5,6,7]
-
 def plot_training(rewards, moving_avg_period=100):
     plt.figure(1)
     plt.xlabel("Episode")
@@ -63,20 +60,3 @@ def plot_epsilon(epsilons):
 def save_q_table(q_table):
     with open('res/q_table.pickle', 'wb') as handle:
         pickle.dump(q_table, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-def dummy(rewards):
-    plt.figure(5)
-    plt.xlabel("Episode")
-    plt.ylabel("Duration")
-    plt.title("Testing Period")
-
-    episodes = [i for i in range(1, 101)]
-    num_1 = plt.plot(episodes, rewards, 'm', label="Episode Reward")
-
-    avg_reward = sum(rewards) / 100
-    avg_rewards = [avg_reward for i in range(100)]
-    num_2 = plt.plot(episodes, avg_rewards,'y', label="Average Reward")
-
-    plt.savefig("res/dummy.png", bbox_inches='tight')
-    plt.legend()
-    plt.show()
