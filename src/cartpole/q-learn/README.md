@@ -6,6 +6,12 @@ Currently, testing and training reside in different python files, so `pickle` is
 
 Looking at the performance graphs, the agent performs significantly better during testing as expected (epsilon is set to 0, so the agent always exploits). Interestingly, when the agent is trained for longer periods (~1000-1500 episodes) it will occasionally peform worse when testing. This could be due to the nature of using a q-table in this environment—the longer the agent is trained, the larger the q-table becomes, and the more likely untrained paths are taken. This is however all speculation.
 
+Run:
+```bash
+python train.py
+python test.py
+```
+
 ## Hyperparameters
 - ALPHA = 0.1
 - GAMMA = 0.9
