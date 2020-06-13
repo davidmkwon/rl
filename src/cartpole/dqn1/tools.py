@@ -31,7 +31,7 @@ class ReplayMemory():
         if len(self.memory) < self.capacity:
             self.memory.append(experience)
         else:
-            self.memory[push_count * self.capacity] = experience
+            self.memory[self.push_count % self.capacity] = experience
 
         self.push_count += 1
 
