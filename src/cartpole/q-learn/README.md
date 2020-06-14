@@ -1,5 +1,6 @@
 # q-learning cartpole
 
+## Overview
 A standard q-learning approach to solving OpenAI Gym's Cartpole environment. Because there are infinite potential states, we convert cart position, cart velocity, pole angle, and pole velocity measurements into a 4 digit number through discretized buckets (see `env.py` for exact sizes). We then map these 4 digit numbers to the two potential actions (left or right) in the q-table.
 
 Currently, testing and training reside in different python files, so `pickle` is used for storing the q_table dictionary externally.
@@ -21,3 +22,10 @@ python test.py
 ## Performance
 <img src="res/training-pic.jpg" alt="drawing" width="550"/>
 <img src="res/testing-pic.jpg" alt="drawing" width="550"/>
+
+## Libraries
+- pickle
+- matplotlib
+- pandas
+- numpy
+- gym
