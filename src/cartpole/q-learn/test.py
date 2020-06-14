@@ -2,7 +2,6 @@ from agent import Agent
 from env import Env
 import utils
 
-import json
 import pickle
 
 agent = Agent(eps=0)

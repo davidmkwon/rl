@@ -28,7 +28,6 @@ agent = agent.Agent(strategy, env_manage.num_actions_available(), device)
 
 policy_net = DQN.DQN(env_manage.get_screen_height(), env_manage.get_screen_width()).to(device)
 target_net = DQN.DQN(env_manage.get_screen_height(), env_manage.get_screen_width()).to(device)
-print(env_manage.get_screen_height(), env_manage.get_screen_width())
 target_net.load_state_dict(policy_net.state_dict())
 target_net.eval()
 
@@ -105,7 +104,7 @@ for episode in range(NUM_EPISODES):
             plot(episode_durations, 100, 50, episode)
             break
 
-        if episode % TARGET_UPDATE == 0:
-            target_net.load_state_dict(policy_net.state_dict())
+    if episode % TARGET_UPDATE == 0:
+        target_net.load_state_dict(policy_net.state_dict())
 
 env_manage.close()

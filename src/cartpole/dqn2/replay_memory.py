@@ -1,12 +1,6 @@
 import random
 from collections import namedtuple
 
-# TODO -> move this to main.py
-Experience = namedtuple(
-        'Experience',
-        ('state', 'action', 'next_state', 'reward')
-        )
-
 class ReplayMemory():
     def __init__(self, capacity):
         '''

@@ -4,7 +4,7 @@ import torch
 
 class Agent():
     def __init__(
-            self, eps=1, eps_min=0.1, eps_max=1, eps_decay = 0.001, num_actions, device='cpu', policy_net, target_net
+            self, eps=1, eps_min=0.1, eps_max=1, eps_decay=0.001, num_actions, device
             ):
         self.eps = eps
         self.eps_min = eps_min
@@ -14,14 +14,11 @@ class Agent():
         self.current_episode = 0
         self.device = device
 
-        self.policy_net = policy_net
-        self.target_net = target_net
-
-    def select_action(self, state):
+    def select_action(self, state, policy_net):
         self.update_epsilon()
         if random.random() > self.eps:
             with torch.no_grad():
-                return self.policy_net(state).argmax(dim=1).to(self.device)
+                return policy_net(state).argmax(dim=1).to(self.device)
         else:
             action = random.randrange(self.num_actions)
             return torch.tensor([action]).to(self.device)
