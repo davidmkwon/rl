@@ -10,7 +10,7 @@ class ReplayMemory():
         self.memory = [0 for i in range(self.capacity)]
         self.push_count = 0
 
-    def push(self, experience):
+    def push(self, state, action, next_state, reward, done):
         '''
         Adds an experience to the memory.
 
@@ -18,7 +18,7 @@ class ReplayMemory():
         capacity then we will start replacing
         the memory starting from the oldest experiences.
         '''
-        self.memory[self.push_count % self.capacity] = experience
+        self.memory[self.push_count % self.capacity] = (state, action, next_state, reward, done)
         self.push_count += 1
 
     def sample(self, batch_size):
