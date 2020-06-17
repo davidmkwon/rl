@@ -54,6 +54,12 @@ class Env():
         else:
             return torch.tensor(state, dtype=torch.float64).unsqueeze(0)
 
+    def render(self):
+        '''
+        Wrapper for gym render.
+        '''
+        self.env.render()
+
     def close(self):
         '''
         Closes the environment.

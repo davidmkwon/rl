@@ -2,6 +2,7 @@ from env import Env
 from agent import Agent
 from replay_memory import ReplayBuffer
 from DQN import DQN
+import utils
 
 import torch
 import torch.optim as optim
@@ -15,15 +16,15 @@ ALPHA = 0.001
 GAMMA = 0.99
 RM_SIZE = 100000
 BATCH_SIZE = 32
-NUM_EPISODES = 1000
+NUM_EPISODES = 400
+NUM_TEST_EPISODES = 100
 MAX_STEPS = 200
 TARGET_UPDATE = 10
 
 POLICY_NET_PATH = "res/policy_net.pt"
 TARGET_NET_PATH = "res/target_net.pt"
 
-# experience tuple - (state, action, next_state, reward, done)
-
+# set up environment
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 env = Env(device)
 agent = Agent(
@@ -31,6 +32,7 @@ agent = Agent(
         )
 memory = ReplayBuffer(RM_SIZE)
 
+# initialize policy and target network
 policy_net = DQN(obs_space=env.obs_space, num_actions=env.num_actions)
 target_net = DQN(obs_space=env.obs_space, num_actions=env.num_actions)
 target_net.load_state_dict(policy_net.state_dict())
@@ -44,6 +46,11 @@ def experience_replay(experiences):
 
     Loss is calculated using Mean Squared Error between current q-values
     and optimal q-values calculated using Bellman Optimality.
+
+    When passing batches through the target net, we only pass the states
+    that are not in the terminal state. If the state is a termianl state,
+    we set it's corresponding index in the next_q_values to the corresponding
+    reward, as the max(q-value) term is 0.
     '''
     exp_zip = list(zip(*experiences))
 
@@ -65,13 +72,14 @@ def experience_replay(experiences):
     next_q_values[next_state_indices] = target_net(next_state_tensors.float()).max(dim=1)[0].detach()
 
     optimal_q_values = reward_tensors + (next_q_values * GAMMA)
-    assert current_q_values.size() == optimal_q_values.unsqueeze(1).size()
 
     return current_q_values, optimal_q_values.unsqueeze(1)
 
-average_rewards = deque(maxlen=50)
-
 def train():
+    average_rewards = deque(maxlen=50)
+    max_reward = 0
+    all_rewards = []
+
     for episode in range(NUM_EPISODES):
         env.reset()
         episode_reward = 0
@@ -81,7 +89,6 @@ def train():
             curr_state = env.state
             new_state, reward, done, _ = env.play_action(action)
 
-            # Decide whether to include experience for initial state.
             memory.push(curr_state, action, new_state, reward, done)
             episode_reward += reward.item()
 
@@ -96,7 +103,11 @@ def train():
             if env.done:
                 break
 
+        all_rewards.append(episode_reward)
         average_rewards.append(episode_reward)
+
+        if episode_reward > max_reward:
+            max_reward = episode_reward
 
         if memory.is_full():
             print("Memory is full.")
@@ -111,7 +122,10 @@ def train():
     torch.save(policy_net.state_dict(), POLICY_NET_PATH)
     torch.save(target_net.state_dict(), TARGET_NET_PATH)
 
-    env.close()
+    utils.plot_training(all_rewards)
 
 if __name__ == '__main__':
+    print('Training...')
     train()
+    print('Done!')
+    env.close()

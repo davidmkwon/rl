@@ -20,7 +20,12 @@ python test.py
 - EPSILON DECAY = 0.001
 
 ## Performance
+During the training process, the agent experiences a very gradual increase in performance, and often stagnant at times. This is likely due to the simply vast number of potential combinations of buckets (technically 10^4 possibilities). To improve, the agent would either need to be trained for a considerably longer time, or find a more efficient bucket structure. The exploration tradeoff in the epsilon greedy strategy also likely contributes a deal to the agent's performance.
+
 <img src="res/training-pic.jpg" alt="drawing" width="550"/>
+
+During the testing process, the agent performs in a rather random manner, with an almost consistent deviation of 50 rewards from the ~110 average. This is likely caused by the incompleteness of the q-table (not sufficiently large enough to capture majority of potential experiences). Note however that the agent still performs significantly better than in the training process, as it's epsilon is now 0.
+
 <img src="res/testing-pic.jpg" alt="drawing" width="550"/>
 
 ## Libraries

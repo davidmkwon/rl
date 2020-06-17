@@ -16,6 +16,8 @@ class ReplayBuffer():
         If the current push_count exceeeds the
         capacity then we will start replacing
         the memory starting from the oldest experiences.
+
+        experience tuple - (state, action, next_state, reward, done)
         '''
         experience = (state, action, next_state, reward, done)
         if self.push_count < self.capacity:
