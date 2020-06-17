@@ -43,6 +43,8 @@ def extract_tensors(experiences):
     t3 = torch.cat(batch.reward)
     t4 = torch.cat(batch.next_state)
 
+    print(t1.size())
+
     return (t1, t2, t3, t4)
 
 class QValues():

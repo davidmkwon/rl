@@ -16,7 +16,6 @@ class DQN(nn.Module):
         Performs forward pass of network using Rectified
         Linear Unit activation function.
         '''
-        t = t.flatten()
         t = F.relu(self.fc1(t))
         t = F.relu(self.fc2(t))
         t = self.out(t)

@@ -1,5 +1,4 @@
 import random
-from collections import namedtuple
 
 class ReplayMemory():
     def __init__(self, capacity):
@@ -7,7 +6,7 @@ class ReplayMemory():
         Initalizes ReplayMemory.
         '''
         self.capacity = capacity
-        self.memory = [0 for i in range(self.capacity)]
+        self.memory = []
         self.push_count = 0
 
     def push(self, state, action, next_state, reward, done):
@@ -18,7 +17,11 @@ class ReplayMemory():
         capacity then we will start replacing
         the memory starting from the oldest experiences.
         '''
-        self.memory[self.push_count % self.capacity] = (state, action, next_state, reward, done)
+        experience = (state, action, next_state, reward, done)
+        if self.push_count < self.capacity:
+            self.memory.append(experience)
+        else:
+            self.memory[self.push_count % self.capacity] = experience
         self.push_count += 1
 
     def sample(self, batch_size):
@@ -33,3 +36,6 @@ class ReplayMemory():
             return random.sample(self.memory, batch_size)
         except ValueError:
             return None
+
+    def is_full(self):
+        return len(self.memory) == self.capacity
