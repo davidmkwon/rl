@@ -4,7 +4,7 @@ This repository showcases my reinforcement learning explorations! A good amount 
 
 Because of the various (and rapidily expanding) number of reinforcement learning algorithms, I try to implement a variety of them and compare performances. Most explorations will have some kind of final rewards graph(s) in their README that displays the progression of rewards over episodes
 
-currently working on: [cartpole/q-learn](https://github.com/davidmkwon/rl/tree/master/src/cartpole/q-learn)
+most recent project: [cartpole/dqn2](https://github.com/davidmkwon/rl/tree/master/src/cartpole/dqn2)
 
 # Structure
 
