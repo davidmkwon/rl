@@ -1,6 +1,6 @@
 from env import Env
 from agent import Agent
-from replay_memory import ReplayMemory
+from replay_memory import ReplayBuffer
 from DQN import DQN
 
 import torch
@@ -29,7 +29,7 @@ env = Env(device)
 agent = Agent(
         eps=EPS_MAX, eps_min=EPS_MIN, eps_max=EPS_MAX, eps_decay=EPS_DECAY, num_actions=env.num_actions, device=device
         )
-memory = ReplayMemory(RM_SIZE)
+memory = ReplayBuffer(RM_SIZE)
 
 policy_net = DQN(obs_space=env.obs_space, num_actions=env.num_actions)
 target_net = DQN(obs_space=env.obs_space, num_actions=env.num_actions)

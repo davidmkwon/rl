@@ -24,8 +24,8 @@ python test.py
 <img src="res/testing-pic.jpg" alt="drawing" width="550"/>
 
 ## Libraries
-- pickle
-- matplotlib
-- pandas
-- numpy
-- gym
+- `pickle`
+- `matplotlib`
+- `pandas`
+- `numpy`
+- `gym`

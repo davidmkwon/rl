@@ -1,6 +1,6 @@
 import random
 
-class ReplayMemory():
+class ReplayBuffer():
     def __init__(self, capacity):
         '''
         Initalizes ReplayMemory.
