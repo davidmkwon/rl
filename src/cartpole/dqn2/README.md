@@ -1,7 +1,7 @@
-# deep q-learning cartpole (2)
+# double deep q-learning cartpole (2)
 
 ## Overview
-A double deep q-learning approach to solving OpenAI Gym's Cartpole environment. We use a neural net of 3 layers--an input layer taking 4 inputs corresponding to observations from the environment (cart position, cart velocity, pole angle, pole velocity), a hidden layer with 24 nodes, and an output layer with 2 outputs corresponding to the potential actions.
+A double deep q-learning (DDQN) approach to solving OpenAI Gym's Cartpole environment. We use a neural net of 3 layers--an input layer taking 4 inputs corresponding to observations from the environment (cart position, cart velocity, pole angle, pole velocity), a hidden layer with 24 nodes, and an output layer with 2 outputs corresponding to the potential actions.
 
 In the training process, we use two models, `policy_net` and `target_net`. `policy_net` is used by the agent for selecting the optimal action (highest q-value output from network), while `target_net` is used to calculate the optimal q-value using the Bellman Optimality equation. `target_net` then copies `policy_net`'s parameters every TARGET_UPDATE = 10 episodes.
 
