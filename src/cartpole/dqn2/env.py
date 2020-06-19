@@ -3,7 +3,10 @@ import numpy as np
 import torch
 
 class Env():
-    def __init__(self, device, env_name='CartPole-v0'):
+    def __init__(self,
+        device,
+        env_name='CartPole-v0'
+        ):
         '''
         Initializes Env object.
 

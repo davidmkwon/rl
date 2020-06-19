@@ -4,7 +4,13 @@ import torch
 
 class Agent():
     def __init__(
-            self, eps, eps_min, eps_max, eps_decay, num_actions, device
+            self,
+            eps,
+            eps_min,
+            eps_max,
+            eps_decay,
+            num_actions,
+            device
             ):
         '''
         Initializes Agent object.

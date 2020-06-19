@@ -2,3 +2,4 @@
 *.swp
 __pycache__
 src/cartpole/dqn2/bleh.py
+src/random/

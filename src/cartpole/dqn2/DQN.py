@@ -2,7 +2,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class DQN(nn.Module):
-    def __init__(self, obs_space, num_actions):
+    def __init__(
+        self,
+        obs_space,
+        num_actions
+        ):
         '''
         Initializes deep network, consisting of 3 layers.
         '''
