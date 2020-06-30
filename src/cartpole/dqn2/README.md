@@ -1,4 +1,4 @@
-# deep q-learning cartpole with fixed q-targets (2)
+# Cartpole - Deep Q-learning with Fixed Q-Targets (2)
 
 ## Overview
 A deep q-learning with fixed q-targets approach to solving OpenAI Gym's Cartpole environment. We use a neural net of 3 layers--an input layer taking 4 inputs corresponding to observations from the environment (cart position, cart velocity, pole angle, pole velocity), a hidden layer with 24 nodes, and an output layer with 2 outputs corresponding to the potential actions.

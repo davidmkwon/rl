@@ -1,5 +1,4 @@
 from env import Env
-from replay_buffer import ReplayBuffer
 from frstack import Frstack
 
 import torch
@@ -12,7 +11,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 memory = ReplayBuffer(MEMORY_SIZE)
 env = Env(device)
 
-stack = Frstack(frame=env.state)
+stack = Frstack(initial_frame=env.state)
 print(stack.get_stack())
 print(stack.get_stack().shape)
 

@@ -1,4 +1,4 @@
-# q-learning cartpole
+# Cartpole - Vanilla Q-Learning
 
 ## Overview
 A standard q-learning approach to solving OpenAI Gym's Cartpole environment. Because there are infinite potential states, we convert cart position, cart velocity, pole angle, and pole velocity measurements into a 4 digit number through discretized buckets (see `env.py` for exact sizes). We then map these 4 digit numbers to the two potential actions (left or right) in the q-table.

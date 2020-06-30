@@ -1,3 +1,3 @@
-# Atari Pong
+# Atari Pong - Double Deep Q-Learning with Fixed Q-Targets and Prioritized Experience Replay
 
-Training an agent to play Atari pong with Double Deep Q Learning, fixed-q-targets and Prioritized Experience Replay
+Double Deep Q-Learning extends the Deep Q-Learning with Fixed Q-Targets approach, taking advantage of a policy and target neural network to prevent the network chasing it's own tail (risky analogy). They differ in that DDQN uses the policy network to find the `a'` in the `argmax(Q(s',a'))` term in the bellman optimality equation, while the `Q(s',a')` is still calculated by the target network.

@@ -1,4 +1,4 @@
-# cartpole with DDQN
+# Cartpole - Deep Q-Learning with Fixed Q-Targets
 
 This is an approach to solving OpenAI Gym's Cartpole environment. The algorithm used is a Deep Q Learning with fixed q-targets approach, using a second target neural net to find the optimal q values. The Target net recopies the weights of the policy net every 10 episodes.
 
