@@ -21,7 +21,7 @@ class Env():
         self.state = None
         self.reset()
         self.device = device
-        
+
         self.num_actions = self.env.action_space.n
 
     def play_action(self, action):
