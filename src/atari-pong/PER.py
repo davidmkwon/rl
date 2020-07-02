@@ -1,72 +1,115 @@
+import random
 import numpy as np
+from sumtree import SumTree
 
-class SumTree(object):
-    # TODO: consider rewriting this with all the data stored in a SumNode object
-    # TODO: reference implementation: https://github.com/jaromiru/AI-blog/blob/master/SumTree.py
-    # TODO: reference implementation: https://github.com/simoninithomas/Deep_reinforcement_learning_Course/blob/master/Dueling%20Double%20DQN%20with%20PER%20and%20fixed-q%20targets/Dueling%20Deep%20Q%20Learning%20with%20Doom%20(%2B%20double%20DQNs%20and%20Prioritized%20Experience%20Replay).ipynb
+class PriorityReplayBuffer(object):
+    # TODO: reference https://github.com/rlcode/per/blob/master/prioritized_memory.py
+
+    e = 0.01
+    a = 0.6
+    beta = 0.4
+    beta_increment_per_sampling = 0.001
 
     def __init__(self, capacity):
         '''
         Args:
-            capacity: the desired capacity, or number of leaf nodes, in the SumTree
+            capacity: capacity of backing SumTree
+        '''
+        self.tree = SumTree(capacity)
+        self.capacity = capacity
+
+    def _get_priority(self, error):
+        '''
+        Args:
+            error: input error
+        Returns:
+            the associated priority
+        '''
+        return (np.abs(error) + self.e) ** self.a
+
+    def add(self, error, experience):
+        '''
+        Args:
+            error: TD error of the sample
+            sample: experience to enter
+        '''
+        p = self._get_priority(error)
+        self.tree.add(p, experience)
+
+    def sample(self, size):
+        '''
+        Args:
+            size: the desired batch size to receive
+        Returns:
+            the batch of experiences, indexes, and importance sampling weights
+        '''
+        batch = []
+        idxs = []
+        segment = self.tree.total() / size
+        priorities = []
+
+        self.beta = np.min([1., self.beta + self.beta_increment_per_sampling])
+
+        for i in range(size):
+            a = segment * i
+            b = segment * (i + 1)
+
+            s = random.uniform(a, b)
+            (idx, p, data) = self.tree.get(s)
+            priorities.append(p)
+            batch.append(data)
+            idxs.append(idx)
+
+        sampling_probabilities = priorities / self.tree.total()
+        is_weight = np.power(self.tree.n_entries * sampling_probabilities, -self.beta)
+        is_weight /= is_weight.max()
+
+        return batch, idxs, is_weight
+
+    def update(self, idx, error):
+        '''
+        Args:
+            idx: the SumTree index to update
+            error: the error of the experience
+        '''
+        p = self._get_priority(error)
+        self.tree.update(idx, p)
+
+class ReplayBuffer(object):
+    def __init__(self, capacity):
+        '''
+        Initalizes ReplayMemory.
         '''
         self.capacity = capacity
-        self.data_pointer = 0
-        self.tree = np.zeros((2 * capacity) - 1)
-        self.data = np.zeros(self.capacity, dtype=object)
+        self.memory = []
+        self.push_count = 0
 
-    def add(self, experience, priority):
+    def push(self, state, action, next_state, reward, done):
         '''
-        Args:
-            experience: the experience to add
-            priority: the priority of the data
+        Adds an experience to the memory.
+
+        If the current push_count exceeeds the
+        capacity then we will start replacing
+        the memory starting from the oldest experiences.
+
+        experience tuple - (state, action, next_state, reward, done)
         '''
-        self.data[self.data_pointer] = experience
-        tree_index = self.data_pointer + self.capacity - 1
-        self.update(tree_index, priority)
-        self.data_pointer += 1
+        experience = (state, action, next_state, reward, done)
+        if self.push_count < self.capacity:
+            self.memory.append(experience)
+        else:
+            self.memory[self.push_count % self.capacity] = experience
+        self.push_count += 1
 
-        # Bring pointer back to beginning if capacity exceeded
-        if self.data_pointer >= self.capacity:
-            self.data_pointer = 0
-
-    def update(self, tree_index, new_priority):
+    def sample(self, batch_size):
         '''
-        Args:
-            tree_index: the index to update respective to the backing array
-            new_priority: the new priority value
+        Returns a randomly selected batch from
+        the memory list.
+
+        If the batch size is larger than the memory
+        size, None is returned
         '''
-        delta = new_priority - self.tree[tree_index]
-        self.tree[tree_index] = new_priority
-        pointer = tree_index
-
-        while pointer != 0:
-            pointer = (pointer - 1) // 2
-            self.tree[pointer] += delta
-
-    def get_leaf(self, v):
-        '''
-        Args:
-            v: random value from 0 to E(priorities)
-        Returns:
-            something.
-        '''
-        pointer = 0
-
-        while True:
-            left, right = pointer * 2 + 1, pointer * 2 + 2
-            if left >= len(self.tree):
-                tree_index = pointer
-                break
-            else:
-                if v <= self.tree[left]:
-                    pointer = left
-                else:
-                    v -= self.tree[left]
-                    pointer = right
-
-        data_index = tree_index - self.capacity + 1
-        return tree_index, self.tree[tree_index], self.data[data_index]
-
-    def total_priority(self):
-        return self.tree[0]
+        try:
+            return random.sample(self.memory, batch_size)
+        except ValueError:
+            return None
