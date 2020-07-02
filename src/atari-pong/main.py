@@ -1,27 +1,41 @@
 from env import Env
 from frstack import Frstack
+from PER import PriorityReplayBuffer
+from ddqn import DDQN
 
 import torch
+import torch.optim as optim
+import torch.nn.functional as F
 import numpy as np
 
 # Hyperparameters
-MEMORY_SIZE = 100000
+EPS_MAX = 1
+EPS_MIN = 1e-2
+EPS_DECAY = 1e-3
+ALPHA = 1e-3
+GAMMA = 0.99
+RM_SIZE = 20000
+BATCH_SIZE = 32
+NUM_EPISODES = 800
+NUM_TEST_EPISODES = 100
+TARGET_UPDATE = 10
+SAVE_UPDATE = 10
+
+POLICY_NET_PATH = "res/policy_net.pt"
+TARGET_NET_PATH = "res/target_net.pt"
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-memory = ReplayBuffer(MEMORY_SIZE)
+memory = PriorityReplayBuffer(MEMORY_SIZE)
 env = Env(device)
 
 stack = Frstack(initial_frame=env.state)
-print(stack.get_stack())
-print(stack.get_stack().shape)
+# print(stack.get_stack())
+# print(stack.get_stack().shape)
 
-t1 = torch.zeros((5, 5), dtype=torch.uint8)
-t2 = torch.zeros((5, 5), dtype=torch.uint8)
-tc = torch.stack((t1, t2), dim=2)
+policy_net = DDQN(stack.frame_count, env.num_actions)
+state = stack.get_stack()
+state = state.unsqueeze(0)
+output = policy_net(state.float())
+print(output.shape)
 
 env.close()
-
-#stack = np.stack((n1, n2), axis=2)
-# print(n1)
-# print(stack.shape)
-# print(stack.shape)

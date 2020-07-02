@@ -21,10 +21,11 @@ class Frstack():
         Returns stacked frames.
 
         Returns:
-            torch tensor of dimensions (frame_height, frame_width, frame_count)
+            torch tensor of dimensions (frame_count, frame_height, frame_width)
+            (note this is because PyTorch CNN takes input as CHW vs TF's HWC)
         '''
         frames = [frame for frame in self.stack]
-        result = torch.stack(frames, dim=2)
+        result = torch.stack(frames)
         return result
 
     def push(self, frame, new_episode):

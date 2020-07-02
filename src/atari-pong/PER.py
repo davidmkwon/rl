@@ -12,6 +12,8 @@ class PriorityReplayBuffer(object):
 
     def __init__(self, capacity):
         '''
+        Initializes PRB.
+
         Args:
             capacity: capacity of backing SumTree
         '''
@@ -20,6 +22,8 @@ class PriorityReplayBuffer(object):
 
     def _get_priority(self, error):
         '''
+        Gets the priority associated with the error.
+
         Args:
             error: input error
         Returns:
@@ -29,6 +33,8 @@ class PriorityReplayBuffer(object):
 
     def add(self, error, experience):
         '''
+        Adds the experience and error to the SumTree.
+
         Args:
             error: TD error of the sample
             sample: experience to enter
@@ -38,6 +44,8 @@ class PriorityReplayBuffer(object):
 
     def sample(self, size):
         '''
+        Returns a sample with given size following weighted distribution.
+
         Args:
             size: the desired batch size to receive
         Returns:
@@ -68,6 +76,8 @@ class PriorityReplayBuffer(object):
 
     def update(self, idx, error):
         '''
+        Updates the tree index with the error.
+        
         Args:
             idx: the SumTree index to update
             error: the error of the experience

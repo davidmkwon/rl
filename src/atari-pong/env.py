@@ -46,7 +46,7 @@ class Env():
             84 x 84 PyTorch tensor
         '''
         state = Env.preprocess_state(state)
-        state = torch.tensor(state, dtype=torch.float64)
+        state = torch.tensor(state, dtype=torch.float64).to(self.device)
         return state
 
     @staticmethod
