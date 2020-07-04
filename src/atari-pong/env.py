@@ -17,10 +17,10 @@ class Env():
             device: PyTorch device for computations
         '''
         self.env = gym.make(env_name)
+        self.device = device
         self.done = False
         self.state = None
         self.reset()
-        self.device = device
 
         self.num_actions = self.env.action_space.n
 
@@ -31,12 +31,14 @@ class Env():
         Args:
             action: index of action to execute
         Returns:
-            
+            (processed) new state, reward, done, and info
         '''
-        return
+        self.state, reward, self.done, info = self.env.step(action.item())
+        self.state = self.state_to_tensor(self.state)
+        reward = torch.tensor([reward], device=self.device)
+        return self.state, reward, self.done, info
 
-    @staticmethod
-    def state_to_tensor(state):
+    def state_to_tensor(self, state):
         '''
         Processes state to PyTorch tensor, delegating to preprocess_state().
         
@@ -71,7 +73,7 @@ class Env():
         self.done = False
         self.env.reset()
         self.state = self.render(mode='rgb_array')
-        self.state = Env.state_to_tensor(self.state)
+        self.state = self.state_to_tensor(self.state)
 
     def render(self, mode='human'):
         '''
