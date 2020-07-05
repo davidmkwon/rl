@@ -3,15 +3,7 @@ import random
 import torch
 
 class Agent():
-    def __init__(
-            self,
-            eps,
-            eps_min,
-            eps_max,
-            eps_decay,
-            num_actions,
-            device
-            ):
+    def __init__(self, eps, eps_min, eps_max, eps_decay, num_actions, device):
         '''
         Initializes Agent object.
         '''
@@ -46,6 +38,7 @@ class Agent():
                 res = torch.tensor([action], device=self.device)
 
             self.current_episode += 1
+
         return res
 
     def update_epsilon(self):

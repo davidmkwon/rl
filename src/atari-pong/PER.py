@@ -19,6 +19,7 @@ class PriorityReplayBuffer(object):
         '''
         self.tree = SumTree(capacity)
         self.capacity = capacity
+        self.size = 0
 
     def _get_priority(self, error):
         '''

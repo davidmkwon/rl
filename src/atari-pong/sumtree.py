@@ -14,6 +14,7 @@ class SumTree(object):
         self.data_pointer = 0
         self.tree = np.zeros((2 * capacity) - 1)
         self.data = np.zeros(self.capacity, dtype=object)
+        self.size = 0
 
     def add(self, experience, priority):
         '''
@@ -29,6 +30,9 @@ class SumTree(object):
         # Bring pointer back to beginning if capacity exceeded
         if self.data_pointer >= self.capacity:
             self.data_pointer = 0
+
+        if self.size < self.capacity:
+            self.size += 1
 
     def update(self, tree_index, new_priority):
         '''
