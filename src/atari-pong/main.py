@@ -4,12 +4,12 @@ from frstack import Frstack
 from PER import PriorityReplayBuffer
 from ddqn import DDQN
 
+from collections import deque
+from itertools import count
 import torch
 import torch.optim as optim
 import torch.nn.functional as F
 import numpy as np
-from collections import deque
-from itertools import count
 
 # Hyperparameters
 EPS_MAX = 1
@@ -31,14 +31,20 @@ TARGET_NET_PATH = "res/target_net.pt"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 env = Env(device)
 agent = Agent(
-        eps=EPS_MAX, eps_min=EPS_MIN, eps_max=EPS_MAX, eps_decay=EPS_DECAY, num_actions=env.num_actions, device=device
+        eps=EPS_MAX, eps_min=EPS_MIN, eps_max=EPS_MAX, eps_decay=EPS_DECAY, num_actions=len(mod_action_space), device=device
         )
 memory = PriorityReplayBuffer(RM_SIZE)
 stack = Frstack(initial_frame=env.state)
+'''
+Running env.env.unwrapped.get_action_meanings(), we get:
+ACTIONS - ['NOOP', 'FIRE', 'RIGHT', 'LEFT', 'RIGHTFIRE', 'LEFTFIRE']
+We will ignore actions 0 and 1.
+'''
+mod_action_space = [2,3,4,5]
 
 # initialize policy and target network
-policy_net = DDQN(stack.frame_count, env.num_actions)
-target_net = DDQN(stack.frame_count, env.num_actions)
+policy_net = DDQN(stack.frame_count, len(mod_action_space))
+target_net = DDQN(stack.frame_count, len(mod_action_space))
 target_net.load_state_dict(policy_net.state_dict())
 target_net.eval()
 # TODO: consider RMSProp vs Adam - DeepMind paper uses RMSProp
@@ -89,22 +95,22 @@ def train():
         curr_state = stack.get_stack()
         next_state = None
 
-        for step in count():
-            # if we are in pre-training phase/filling up memory, then pick
-            # a random action
+        while not env.done:
+            # if we are in pre-training phase/filling up memory, then pick a random action.
+            # else pick the highest q-value action
             if memory.tree.size <= PRE_TRAIN_LENGTH:
-                action = random.choice(env.num_actions)
+                action = random.choice(len(mod_action_space))
             else:
                 action = agent.select_action(state=env.state, policy_net=policy_net)
 
-            next_state, reward, done, _ = env.play_action(action)
+            next_state, reward, done, _ = env.play_action(mod_action_space(action))
             stack.push(next_state, False)
             next_state = stack.get_stack()
 
             # experience tuple - (state, action, next_state, reward, done)
             assert curr_state.shape == torch.Size((4,84,84))
             assert next_state.shape == torch.Size((4,84,84))
-            memory.add(curr_state, action, new_state, reward, done)
+            memory.add((curr_state, action, new_state, reward, done))
 
             if memory.tree.size >= PRE_TRAIN_LENGTH:
                 experience_replay()
