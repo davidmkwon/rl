@@ -61,9 +61,9 @@ def experience_replay():
     batch, idxs, is_weights = memory.sample(BATCH_SIZE)
     batch = list(zip(*batch))
 
-    state_tensors = torch.cat(batch[0])
+    state_tensors = torch.stack(batch[0])
     action_tensors = torch.cat(batch[1])
-    next_state_tensors = torch.cat(batch[2])
+    next_state_tensors = torch.stack(batch[2])
     reward_tensors = torch.cat(batch[3])
     dones_tensor = torch.FloatTensor(batch[4])
 
@@ -74,15 +74,20 @@ def experience_replay():
     # find optimal q-values by finding the maximum q-value action indices using the policy_net
     # and evaluating them with the target_net (Double DQN)
     best_action_indices = policy_net(next_state_tensors.float()).detach().argmax(dim=1)
-    next_q_values = target_net(next_state_tensors.float()).detach().gather(dim=1, index=best_action_indices.unsqueeze(1))
+    optimal_q_values = target_net(next_state_tensors.float()).detach().gather(dim=1, index=best_action_indices.unsqueeze(1))
+    # change dimensions of cq_values and oq_values from [32, 1] -> [32]
+    current_q_values, optimal_q_values = current_q_values.squeeze(), optimal_q_values.squeeze()
     # next_q_values = next_q_values.squeeze()
-    optimal_q_values = reward_tensors + (1 - dones_tensor) * GAMMA * next_q_values
+    optimal_q_values = reward_tensors + (1 - dones_tensor) * GAMMA * optimal_q_values
+
+    assert current_q_values.shape == torch.Size([32])
+    assert optimal_q_values.shape == current_q_values.shape
 
     # update the Prioritized Replay Buffer
     errors = torch.abs(current_q_values - optimal_q_values).data.numpy()
     for i in range(BATCH_SIZE):
         idx = idxs[i]
-        self.memory.update(idx, errors[i])
+        memory.update(idx, errors[i])
 
     # backpropogate network with MSE loss
     optimizer.zero_grad()
@@ -98,14 +103,14 @@ def get_error(experience):
         action = action.item()
 
         current_q_value = policy_net(state.float())
-        current_q_value = current_q_value[action]
+        current_q_value = current_q_value[0][action]
 
-        best_action_index = policy_net(next_state.float()).argmax(dim=0)
-        optimal_q_value = target_net(next_state.float())[best_action_index]
-        optimal_q_value = reward * (1 - done) + GAMMA * optimal_q_value
+        best_action_index = policy_net(next_state.float()).argmax(dim=1)
+        optimal_q_value = target_net(next_state.float())[0][best_action_index.item()]
+        optimal_q_value = reward + (1 - done) * GAMMA * optimal_q_value
 
         error = abs(current_q_value - optimal_q_value)
-        return error.item()
+        return error
 
 def train():
     average_rewards = deque(maxlen=LOG_EVERY)
