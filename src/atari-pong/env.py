@@ -33,7 +33,7 @@ class Env():
         Returns:
             (processed) new state, reward, done, and info
         '''
-        self.state, reward, self.done, info = self.env.step(action.item())
+        self.state, reward, self.done, info = self.env.step(action)
         self.state = self.state_to_tensor(self.state)
         reward = torch.tensor([reward], device=self.device)
         return self.state, reward, self.done, info

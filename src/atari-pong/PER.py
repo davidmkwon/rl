@@ -40,8 +40,8 @@ class PriorityReplayBuffer(object):
             error: TD error of the sample
             sample: experience to enter
         '''
-        p = self._get_priority(error)
-        self.tree.add(p, experience)
+        priority = self._get_priority(error)
+        self.tree.add(experience, priority)
 
     def sample(self, size):
         '''

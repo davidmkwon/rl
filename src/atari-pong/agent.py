@@ -24,18 +24,23 @@ class Agent():
         and exploitation. Note that gradients are temporarily set
         off in policy_net when completing a forward pass in order
         to get the maximum q-value
+
+        Args:
+            state: current state of the environment
+            policy_net: the network used to find q-values
+        Returns:
+            the index of the best action to take 
         '''
         if self.eps_off:
             with torch.no_grad():
-                res = policy_net(state.float()).argmax(dim=1).to(self.device)
+                res = policy_net(state.float()).argmax(dim=1).item()
         else:
             self.update_epsilon()
             if random.random() > self.eps:
                 with torch.no_grad():
-                    res = policy_net(state.float()).argmax(dim=1).to(self.device)
+                    res = policy_net(state.float()).argmax(dim=1).item()
             else:
-                action = random.randrange(self.num_actions)
-                res = torch.tensor([action], device=self.device)
+                res = random.randrange(self.num_actions)
 
             self.current_episode += 1
 
