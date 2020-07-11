@@ -3,7 +3,7 @@ from env import Env
 from frstack import Frstack
 from PER import PriorityReplayBuffer
 from ddqn import DDQN
-from utils import utils
+import utils
 
 from collections import deque
 from itertools import count
@@ -13,7 +13,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 import numpy as np
 
-# Hyperparameters
+# hyperparameters
 EPS_MAX = 1
 EPS_MIN = 1e-2
 EPS_DECAY = 5e-5
@@ -32,6 +32,11 @@ LOG_EVERY = 500
 
 # set up environment/agent
 mod_action_space = [2,3,4,5]
+'''
+Running env.env.unwrapped.get_action_meanings(), we get:
+ACTIONS - ['NOOP', 'FIRE', 'RIGHT', 'LEFT', 'RIGHTFIRE', 'LEFTFIRE']
+We will ignore actions 0 and 1.
+'''
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 env = Env(device)
 agent = Agent(
@@ -39,11 +44,6 @@ agent = Agent(
         )
 memory = PriorityReplayBuffer(MEMORY_SIZE)
 stack = Frstack(initial_frame=env.state)
-'''
-Running env.env.unwrapped.get_action_meanings(), we get:
-ACTIONS - ['NOOP', 'FIRE', 'RIGHT', 'LEFT', 'RIGHTFIRE', 'LEFTFIRE']
-We will ignore actions 0 and 1.
-'''
 
 # initialize policy and target network
 policy_net = DDQN(stack.frame_count, len(mod_action_space))
