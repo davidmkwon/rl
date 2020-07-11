@@ -54,7 +54,7 @@ class PriorityReplayBuffer(object):
         '''
         batch = []
         idxs = []
-        segment = self.tree.total() / size
+        segment = self.tree.total_priority() / size
         priorities = []
 
         self.beta = np.min([1., self.beta + self.beta_increment_per_sampling])
@@ -64,13 +64,13 @@ class PriorityReplayBuffer(object):
             b = segment * (i + 1)
 
             s = random.uniform(a, b)
-            (idx, p, data) = self.tree.get(s)
+            (idx, p, data) = self.tree.get_leaf(s)
             priorities.append(p)
             batch.append(data)
             idxs.append(idx)
 
-        sampling_probabilities = priorities / self.tree.total()
-        is_weight = np.power(self.tree.n_entries * sampling_probabilities, -self.beta)
+        sampling_probabilities = priorities / self.tree.total_priority()
+        is_weight = np.power(self.tree.size * sampling_probabilities, -self.beta)
         is_weight /= is_weight.max()
 
         return batch, idxs, is_weight

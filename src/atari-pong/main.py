@@ -3,7 +3,7 @@ from env import Env
 from frstack import Frstack
 from PER import PriorityReplayBuffer
 from ddqn import DDQN
-from utils import utils
+import utils
 
 from collections import deque
 from itertools import count
@@ -29,6 +29,7 @@ SAVE_UPDATE = 50
 POLICY_NET_PATH = "res/policy_net.pt"
 TARGET_NET_PATH = "res/target_net.pt"
 LOG_EVERY = 500
+USE_GPU = torch.cuda.is_available()
 
 # set up environment/agent
 mod_action_space = [2,3,4,5]
@@ -50,6 +51,9 @@ policy_net = DDQN(stack.frame_count, len(mod_action_space))
 target_net = DDQN(stack.frame_count, len(mod_action_space))
 target_net.load_state_dict(policy_net.state_dict())
 target_net.eval()
+if USE_GPU:
+    policy_net.cuda()
+    target_net.cuda()
 # TODO: consider RMSProp vs Adam - DeepMind paper uses RMSProp
 optimizer = optim.Adam(params=policy_net.parameters(), lr=ALPHA)
 
@@ -58,10 +62,10 @@ def experience_replay():
     batch = list(zip(*batch))
 
     state_tensors = torch.cat(batch[0])
-    action_tensors = torch.cat(exp_zip[1])
-    next_state_tensors = torch.cat(exp_zip[2])
-    reward_tensors = torch.cat(exp_zip[3])
-    dones_tensor = torch.FloatTensor(exp_zip[4])
+    action_tensors = torch.cat(batch[1])
+    next_state_tensors = torch.cat(batch[2])
+    reward_tensors = torch.cat(batch[3])
+    dones_tensor = torch.FloatTensor(batch[4])
 
     # find q-values for current states through policy_net
     actions_index = action_tensors.unsqueeze(1)
@@ -135,7 +139,7 @@ def train():
             episode_reward += reward.item()
             curr_state = next_state
 
-            if memory.tree.size >= PRE_TRAIN_LENGTH:
+            if memory.tree.size >= BATCH_SIZE:
                 experience_replay()
 
             if env.done:
