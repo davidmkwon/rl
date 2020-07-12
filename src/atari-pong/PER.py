@@ -1,6 +1,5 @@
 import random
 import numpy as np
-import torch
 from sumtree import SumTree
 
 class PriorityReplayBuffer(object):
@@ -10,6 +9,7 @@ class PriorityReplayBuffer(object):
     a = 0.6
     beta = 0.4
     beta_increment_per_sampling = 0.001
+    absolute_error_upper = 1.
 
     def __init__(self, capacity):
         '''
@@ -30,7 +30,9 @@ class PriorityReplayBuffer(object):
         Returns:
             the associated priority
         '''
-        return (np.abs(error) + self.e) ** self.a
+        priority = np.abs(error) + self.e
+        priority = np.minimum(priority, self.absolute_error_upper)
+        return priority ** self.a
 
     def add(self, error, experience):
         '''
@@ -41,8 +43,6 @@ class PriorityReplayBuffer(object):
             sample: experience to enter
         '''
         priority = self._get_priority(error)
-        if priority == 0:
-            priority = 1.
         self.tree.add(experience, priority)
 
     def sample(self, size):
@@ -74,7 +74,7 @@ class PriorityReplayBuffer(object):
             idxs.append(idx)
 
         sampling_probabilities = priorities / self.tree.total_priority()
-        is_weight = np.power(size * sampling_probabilities, -self.beta)
+        is_weight = np.power(self.tree.size * sampling_probabilities, -self.beta)
         is_weight /= is_weight.max()
 
         return batch, idxs, is_weight
@@ -89,42 +89,3 @@ class PriorityReplayBuffer(object):
         '''
         p = self._get_priority(error)
         self.tree.update(idx, p)
-
-class ReplayBuffer(object):
-    def __init__(self, capacity):
-        '''
-        Initalizes ReplayMemory.
-        '''
-        self.capacity = capacity
-        self.memory = []
-        self.push_count = 0
-
-    def push(self, state, action, next_state, reward, done):
-        '''
-        Adds an experience to the memory.
-
-        If the current push_count exceeeds the
-        capacity then we will start replacing
-        the memory starting from the oldest experiences.
-
-        experience tuple - (state, action, next_state, reward, done)
-        '''
-        experience = (state, action, next_state, reward, done)
-        if self.push_count < self.capacity:
-            self.memory.append(experience)
-        else:
-            self.memory[self.push_count % self.capacity] = experience
-        self.push_count += 1
-
-    def sample(self, batch_size):
-        '''
-        Returns a randomly selected batch from
-        the memory list.
-
-        If the batch size is larger than the memory
-        size, None is returned
-        '''
-        try:
-            return random.sample(self.memory, batch_size)
-        except ValueError:
-            return None
