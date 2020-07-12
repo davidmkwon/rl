@@ -17,13 +17,13 @@ import numpy as np
 EPS_MAX = 1
 EPS_MIN = 1e-2
 EPS_DECAY = 5e-5
-ALPHA = 1e-3
+ALPHA = 2.5e-4
 GAMMA = 0.99
 MEMORY_SIZE = 100000
 BATCH_SIZE = 32
-NUM_EPISODES = 10000
+NUM_EPISODES = 7500
 NUM_TEST_EPISODES = 100
-PRE_TRAIN_LENGTH = 30000
+PRE_TRAIN_LENGTH = 40000
 TAU = 10000
 SAVE_UPDATE = 50
 POLICY_NET_PATH = "res/policy_net.pt"
@@ -65,7 +65,7 @@ def experience_replay():
     action_tensors = torch.cat(batch[1])
     next_state_tensors = torch.stack(batch[2])
     reward_tensors = torch.cat(batch[3])
-    dones_tensor = torch.FloatTensor(batch[4])
+    dones_tensor = torch.FloatTensor(batch[4]).to(device=device)
 
     # find q-values for current states through policy_net
     actions_index = action_tensors.unsqueeze(1)
@@ -84,14 +84,14 @@ def experience_replay():
     assert optimal_q_values.shape == current_q_values.shape
 
     # update the Prioritized Replay Buffer
-    errors = torch.abs(current_q_values - optimal_q_values).data.numpy()
+    errors = torch.abs(current_q_values - optimal_q_values) #.data.numpy()
     for i in range(BATCH_SIZE):
         idx = idxs[i]
         memory.update(idx, errors[i])
 
     # backpropogate network with MSE loss
     optimizer.zero_grad()
-    loss = (torch.FloatTensor(is_weights) * F.mse_loss(current_q_values, optimal_q_values)).mean()
+    loss = (torch.FloatTensor(is_weights).to(device=device) * F.mse_loss(current_q_values, optimal_q_values)).mean()
     loss.backward()
     optimizer.step()
 
@@ -129,14 +129,14 @@ def train():
             if memory.tree.size <= PRE_TRAIN_LENGTH:
                 action = random.randrange(len(mod_action_space))
             else:
-                action = agent.select_action(state=env.state, policy_net=policy_net)
+                action = agent.select_action(state=curr_state, policy_net=policy_net)
 
             next_state, reward, done, _ = env.play_action(mod_action_space[action])
             stack.push(next_state, False)
             next_state = stack.get_stack()
 
             # store experience in memory -> (state, action, next_state, reward, done)
-            action_tensor = torch.tensor([action])
+            action_tensor = torch.tensor([action]).to(device=device)
             experience = (curr_state, action_tensor, next_state, reward, done)
             error = get_error(experience)
             memory.add(error=error, experience=experience)
@@ -144,7 +144,7 @@ def train():
             episode_reward += reward.item()
             curr_state = next_state
 
-            if memory.tree.size >= BATCH_SIZE:
+            if memory.tree.size >= PRE_TRAIN_LENGTH:
                 experience_replay()
 
             if env.done:

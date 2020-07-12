@@ -30,7 +30,6 @@ def plot_training(rewards, moving_avg_period=100):
     plt.savefig("res/training.png", bbox_inches="tight")
     plt.legend()
     # omit plt.show() line because running on VM
-    plt.show()
 
 def plot_testing(rewards):
     plt.figure(2)

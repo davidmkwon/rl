@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import torch
 from sumtree import SumTree
 
 class PriorityReplayBuffer(object):
@@ -30,7 +31,7 @@ class PriorityReplayBuffer(object):
         Returns:
             the associated priority
         '''
-        return (np.abs(error) + self.e) ** self.a
+        return (torch.abs(error) + self.e) ** self.a
 
     def add(self, error, experience):
         '''
