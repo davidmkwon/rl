@@ -1,6 +1,7 @@
 from collections import deque
 
-import torch
+# import torch
+import numpy as np
 
 class Frstack():
 
@@ -25,7 +26,8 @@ class Frstack():
             (note this is because PyTorch CNN takes input as CHW vs TF's HWC)
         '''
         frames = [frame for frame in self.stack]
-        result = torch.stack(frames)
+        # result = torch.stack(frames)
+        result = np.stack(frames)
         return result
 
     def push(self, frame, new_episode):

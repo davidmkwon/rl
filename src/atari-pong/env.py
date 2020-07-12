@@ -1,10 +1,9 @@
 import gym
 import torch
-
 from skimage import transform
 from skimage.color import rgb2gray
-
 from matplotlib import pyplot as plt
+import numpy as np
 
 class Env():
     
@@ -34,13 +33,14 @@ class Env():
             (processed) new state, reward, done, and info
         '''
         self.state, reward, self.done, info = self.env.step(action)
-        self.state = self.state_to_tensor(self.state)
-        reward = torch.tensor([reward], device=self.device)
+        self.state = Env.preprocess_state(self.state)
+        reward = np.array([reward])
         return self.state, reward, self.done, info
 
     def state_to_tensor(self, state):
         '''
         Processes state to PyTorch tensor, delegating to preprocess_state().
+        TODO: right now this method does nothing, we are storing as np, not cuda tensor.
         
         Args:
             state: RGB array from rendered environment
@@ -48,7 +48,8 @@ class Env():
             84 x 84 PyTorch tensor
         '''
         state = Env.preprocess_state(state)
-        state = torch.tensor(state, dtype=torch.float64).to(self.device)
+        # state = torch.tensor(state, dtype=torch.float64).to(self.device)
+        state = torch.tensor(state, dtype=dtype)
         return state
 
     @staticmethod
@@ -73,7 +74,7 @@ class Env():
         self.done = False
         self.env.reset()
         self.state = self.render(mode='rgb_array')
-        self.state = self.state_to_tensor(self.state)
+        self.state= Env.preprocess_state(self.state)
 
     def render(self, mode='human'):
         '''

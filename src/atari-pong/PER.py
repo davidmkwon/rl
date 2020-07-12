@@ -20,7 +20,6 @@ class PriorityReplayBuffer(object):
         '''
         self.tree = SumTree(capacity)
         self.capacity = capacity
-        self.size = 0
 
     def _get_priority(self, error):
         '''
@@ -31,7 +30,7 @@ class PriorityReplayBuffer(object):
         Returns:
             the associated priority
         '''
-        return (torch.abs(error) + self.e) ** self.a
+        return (np.abs(error) + self.e) ** self.a
 
     def add(self, error, experience):
         '''
@@ -42,6 +41,8 @@ class PriorityReplayBuffer(object):
             sample: experience to enter
         '''
         priority = self._get_priority(error)
+        if priority == 0:
+            priority = 1.
         self.tree.add(experience, priority)
 
     def sample(self, size):
@@ -59,6 +60,8 @@ class PriorityReplayBuffer(object):
         priorities = []
 
         self.beta = np.min([1., self.beta + self.beta_increment_per_sampling])
+        # p_min = np.min(self.tree.tree[-self.tree.capacity:])
+        # max_weight = (p_min * size) ** (-self.beta)
 
         for i in range(size):
             a = segment * i
@@ -71,7 +74,7 @@ class PriorityReplayBuffer(object):
             idxs.append(idx)
 
         sampling_probabilities = priorities / self.tree.total_priority()
-        is_weight = np.power(self.tree.size * sampling_probabilities, -self.beta)
+        is_weight = np.power(size * sampling_probabilities, -self.beta)
         is_weight /= is_weight.max()
 
         return batch, idxs, is_weight
