@@ -22,7 +22,7 @@ GAMMA = 0.99
 MEMORY_SIZE = 100000
 BATCH_SIZE = 32
 NUM_EPISODES = 7500
-PRE_TRAIN_LENGTH = 40
+PRE_TRAIN_LENGTH = 100000
 TAU = 10000
 SAVE_UPDATE = 25
 POLICY_NET_PATH = "res/policy_net.pt"
@@ -140,7 +140,7 @@ def pre_train():
             next_state = None
 
     assert memory.tree.size == PRE_TRAIN_LENGTH
-    print("completed pre training")
+    print("completed pre training\n")
 
 def train():
     print("training")
@@ -195,7 +195,7 @@ def train():
     torch.save(policy_net.state_dict(), POLICY_NET_PATH)
     torch.save(target_net.state_dict(), TARGET_NET_PATH)
 
-    print("done!")
+    print("done!\n")
 
 if __name__ == '__main__':
     pre_train()
