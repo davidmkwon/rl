@@ -6,7 +6,6 @@ from ddqn import DDQN
 import utils
 
 from collections import deque
-from itertools import count
 import random
 import torch
 import torch.optim as optim
@@ -14,6 +13,7 @@ import torch.nn.functional as F
 import numpy as np
 
 # hyperparameters
+NUM_FRAMES = 4
 EPS_MAX = 1
 EPS_MIN = 1e-2
 EPS_DECAY = 5e-5
@@ -21,7 +21,7 @@ ALPHA = 2.5e-4
 GAMMA = 0.99
 MEMORY_SIZE = 100000
 BATCH_SIZE = 32
-NUM_EPISODES = 7500
+NUM_EPISODES = 1200
 PRE_TRAIN_LENGTH = 100000
 TAU = 10000
 SAVE_UPDATE = 25
@@ -50,8 +50,8 @@ memory = PriorityReplayBuffer(MEMORY_SIZE)
 stack = Frstack(initial_frame=env.state)
 
 # initialize policy and target network
-policy_net = DDQN(stack.frame_count, len(mod_action_space))
-target_net = DDQN(stack.frame_count, len(mod_action_space))
+policy_net = DDQN(NUM_FRAMES, len(mod_action_space))
+target_net = DDQN(NUM_FRAMES, len(mod_action_space))
 if USE_GPU:
     policy_net.cuda()
     target_net.cuda()
@@ -182,6 +182,7 @@ def train():
         if episode % LOG_EVERY == 0:
             average_reward = sum(average_rewards) / LOG_EVERY
             print("Current episode: {}\nAverge reward: {}\n".format(episode, average_reward))
+            utils.plot_training(all_rewards)
 
         if tau_count >= TAU:
             target_net.load_state_dict(policy_net.state_dict())

@@ -33,6 +33,8 @@ class Agent():
         '''
         if self.eps_off:
             with torch.no_grad():
+                state = torch.from_numpy(state).to(self.device)
+                state = state.unsqueeze(0)
                 res = policy_net(state.float()).argmax(dim=1).item()
         else:
             self.update_epsilon()

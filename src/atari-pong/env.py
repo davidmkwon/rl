@@ -19,6 +19,7 @@ class Env():
         self.device = device
         self.done = False
         self.state = None
+        self.rgb_state = None
         self.reset()
 
         self.num_actions = self.env.action_space.n
@@ -32,25 +33,10 @@ class Env():
         Returns:
             (processed) new state, reward, done, and info
         '''
-        self.state, reward, self.done, info = self.env.step(action)
-        self.state = Env.preprocess_state(self.state)
+        self.rgb_state, reward, self.done, info = self.env.step(action)
+        self.state = Env.preprocess_state(self.rgb_state)
         reward = np.array([reward])
         return self.state, reward, self.done, info
-
-    def state_to_tensor(self, state):
-        '''
-        Processes state to PyTorch tensor, delegating to preprocess_state().
-        TODO: right now this method does nothing, we are storing as np, not cuda tensor.
-        
-        Args:
-            state: RGB array from rendered environment
-        Returns:
-            84 x 84 PyTorch tensor
-        '''
-        state = Env.preprocess_state(state)
-        # state = torch.tensor(state, dtype=torch.float64).to(self.device)
-        state = torch.tensor(state, dtype=dtype)
-        return state
 
     @staticmethod
     def preprocess_state(state, RESIZE_HEIGHT=84, RESIZE_WIDTH=84):
@@ -73,8 +59,8 @@ class Env():
         '''
         self.done = False
         self.env.reset()
-        self.state = self.render(mode='rgb_array')
-        self.state= Env.preprocess_state(self.state)
+        self.rgb_state = self.render(mode='rgb_array')
+        self.state = Env.preprocess_state(self.rgb_state)
 
     def render(self, mode='human'):
         '''
