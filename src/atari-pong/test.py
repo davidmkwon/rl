@@ -20,7 +20,8 @@ from PIL import Image
 # for agent eps bounds
 dum_val = 1
 NUM_FRAMES = 4
-NUM_TEST_EPISODES = 10
+NUM_TEST_EPISODES = 1
+POLICY_NET_PATH = "res/trained_policy_net.pt"
 dtype = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
 
 USE_GPU = torch.cuda.is_available()
@@ -37,10 +38,11 @@ stack = Frstack(initial_frame=env.state)
 policy_net = DDQN(NUM_FRAMES, len(mod_action_space))
 if USE_GPU:
     policy_net.cuda()
-policy_net.load_state_dict("path to res files")
-policy_net.eval()
 
 def test():
+    policy_net.load_state_dict(torch.load(POLICY_NET_PATH))
+    policy_net.eval()
+
     print("testing...")
     all_rewards = []
     all_images = []
@@ -67,7 +69,7 @@ def test():
         all_rewards.append(episode_reward)
 
     utils.plot_testing(all_rewards)
-    images[0].save('res/pong.gif', save_all=True, appeng_images=images[1:], duration=40)
+    all_images[0].save('res/pong.gif', save_all=True, appeng_images=all_images[1:], duration=40)
 
     print('done testing!')
 
