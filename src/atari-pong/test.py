@@ -68,8 +68,9 @@ def test():
         print("Current episode reward:", episode_reward)
         all_rewards.append(episode_reward)
 
+    assert all_images[0] != all_images[-1]
     utils.plot_testing(all_rewards)
-    all_images[0].save('res/pong.gif', save_all=True, appeng_images=all_images[1:])
+    all_images[0].save('res/pong.gif', save_all=True, append_images=all_images[1:])
 
     print('done testing!')
 
