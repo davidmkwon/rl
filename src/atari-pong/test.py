@@ -69,7 +69,7 @@ def test():
         all_rewards.append(episode_reward)
 
     utils.plot_testing(all_rewards)
-    all_images[0].save('res/pong.gif', save_all=True, appeng_images=all_images[1:], duration=40)
+    all_images[0].save('res/pong.gif', save_all=True, appeng_images=all_images[1:])
 
     print('done testing!')
 
