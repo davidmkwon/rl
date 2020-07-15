@@ -24,6 +24,7 @@ NUM_TEST_EPISODES = 1
 POLICY_NET_PATH = "res/trained_policy_net.pt"
 dtype = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
 
+# set up environment tools
 USE_GPU = torch.cuda.is_available()
 mod_action_space = [2,3,4,5]
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -69,7 +70,10 @@ def test():
         all_rewards.append(episode_reward)
 
     utils.plot_testing(all_rewards)
-    all_images[1000].save('res/pong.gif', save_all=True, append_images=all_images[1001:])
+
+    # note: using pillow to save GIFs caused some arbitrary blacking out of pixels so
+    # re-edited the gif with ezgif.com
+    all_images[0].save('res/pong.gif', save_all=True, append_images=all_images[1:])
 
     print('done testing!')
 
