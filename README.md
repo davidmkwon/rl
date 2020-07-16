@@ -6,7 +6,7 @@
 
 This repository showcases my reinforcement learning explorations! A good amount of them will be using OpenAI's [gym](https://github.com/openai/gym), an open source library that contains various environments to explore rl algorithms on. I highly recommend this library as you don't need to worry about setting up a proper environment. I will also occasionally create and use my own environments.
 
-Because of the various (and rapidily expanding) number of reinforcement learning algorithms, I try to implement a variety of them and compare performances. Most explorations will have some kind of final rewards graph(s) in their README that displays the progression of rewards over episodes
+There is a rapdily growing number of reinforcement learning algorithms, from DQN to PPO to A3C. In this repo lie my attempts to implement them as best as possible.
 
 **currently working on**: [atari-pong](https://github.com/davidmkwon/rl/tree/master/src/atari-pong/)
 
