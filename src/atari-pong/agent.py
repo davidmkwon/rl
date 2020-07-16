@@ -33,11 +33,16 @@ class Agent():
         '''
         if self.eps_off:
             with torch.no_grad():
+                state = torch.from_numpy(state).to(self.device)
+                state = state.unsqueeze(0)
                 res = policy_net(state.float()).argmax(dim=1).item()
         else:
             self.update_epsilon()
             if random.random() > self.eps:
                 with torch.no_grad():
+                    # currently state is in [4,84,84] size input -> change to [1,4,84,84] for CNN
+                    state = torch.from_numpy(state).to(self.device)
+                    state = state.unsqueeze(0)
                     res = policy_net(state.float()).argmax(dim=1).item()
             else:
                 res = random.randrange(self.num_actions)

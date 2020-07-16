@@ -44,7 +44,7 @@ class DDQN(nn.Module):
         '''
         t = F.relu(self.conv1(t))
         t = F.relu(self.conv2(t))
-        t = torch.flatten(t)
+        t = t.view(t.size(0), -1)
         t = F.relu(self.fc(t))
         t = self.output(t)
 
