@@ -37,3 +37,4 @@ During the testing process, the model performs exceptionally well, reaching MAX_
 - `gym`
 - `torch`
 - `numpy`
+- `matplotlib`

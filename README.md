@@ -1,5 +1,9 @@
 # Overview
 
+<p align="center">
+    <img src="src/atari-pong/res/pong.gif" alt="pong gameplay"/>
+</p>
+
 This repository showcases my reinforcement learning explorations! A good amount of them will be using OpenAI's [gym](https://github.com/openai/gym), an open source library that contains various environments to explore rl algorithms on. I highly recommend this library as you don't need to worry about setting up a proper environment. I will also occasionally create and use my own environments.
 
 Because of the various (and rapidily expanding) number of reinforcement learning algorithms, I try to implement a variety of them and compare performances. Most explorations will have some kind of final rewards graph(s) in their README that displays the progression of rewards over episodes

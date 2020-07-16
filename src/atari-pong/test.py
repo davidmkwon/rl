@@ -1,6 +1,3 @@
-# TODO: add these gifs to the main readme
-# TODO: change "target update" terminology in cartpole dqn2 to TAU
-
 # TODO: make vm branch the master branch (all changes are on there now)
 
 # TODO: add in-depth README for atari pong
