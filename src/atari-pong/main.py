@@ -41,11 +41,6 @@ ACTIONS - ['NOOP', 'FIRE', 'RIGHT', 'LEFT', 'RIGHTFIRE', 'LEFTFIRE']
 We will ignore actions 0 and 1.
 '''
 mod_action_space = [2,3,4,5]
-'''
-Running env.env.unwrapped.get_action_meanings(), we get:
-ACTIONS - ['NOOP', 'FIRE', 'RIGHT', 'LEFT', 'RIGHTFIRE', 'LEFTFIRE']
-We will ignore actions 0 and 1.
-'''
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 env = Env(device)
 agent = Agent(
