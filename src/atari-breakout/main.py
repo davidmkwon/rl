@@ -4,7 +4,7 @@ from agent import Agent
 from env import Env
 from frstack import Frstack
 from PER import PriorityReplayBuffer
-from ddqn import DuelingDQN
+from ddqn import DuelingDQN, DQN
 import utils
 
 from collections import deque
@@ -52,8 +52,8 @@ memory = PriorityReplayBuffer(MEMORY_SIZE)
 stack = Frstack(initial_frame=env.state)
 
 # initialize policy and target network
-policy_net = DuelingDQN(NUM_FRAMES, len(mod_action_space))
-target_net = DuelingDQN(NUM_FRAMES, len(mod_action_space))
+policy_net = DQN(NUM_FRAMES, len(mod_action_space))
+target_net = DQN(NUM_FRAMES, len(mod_action_space))
 if USE_GPU:
     policy_net.cuda()
     target_net.cuda()
