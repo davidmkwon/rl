@@ -6,11 +6,11 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 class Env():
-    
+
     def __init__(self, device, env_name='PongDeterministic-v4'):
         '''
         Initialize Env object.
-        
+
         Args:
             env_name: name of Gym environment
             device: PyTorch device for computations
@@ -27,7 +27,7 @@ class Env():
     def play_action(self, action):
         '''
         Executes given action in the environment.
-        
+
         Args:
             action: index of action to execute
         Returns:
@@ -42,7 +42,7 @@ class Env():
     def preprocess_state(state, RESIZE_HEIGHT=84, RESIZE_WIDTH=84):
         '''
         Converts state to Grayscale, crops top/bottom, and resizes
-        
+
         Args:
             state: RGB array from rendered environment
         Returns:
@@ -65,19 +65,19 @@ class Env():
     def render(self, mode='human'):
         '''
         Renders environment.
-        
+
         Args:
             mode: type of rendering (human or rgb_array)
         '''
         return self.env.render(mode)
-    
+
     def show_state(self):
         '''
         Plots current state.
         '''
         plt.imshow(self.state.numpy(), cmap='gray')
         plt.show()
-        
+
     def close(self):
         '''
         Closes the environment.
