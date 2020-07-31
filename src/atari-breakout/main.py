@@ -1,3 +1,5 @@
+#!/opt/conda/bin/python3
+
 from agent import Agent
 from env import Env
 from frstack import Frstack
@@ -183,6 +185,8 @@ def train():
         if episode % LOG_EVERY == 0:
             average_reward = sum(average_rewards) / LOG_EVERY
             print("Current episode: {}\nAverge reward: {}\n".format(episode, average_reward))
+
+        if episode != 0 and episode != 100 and episode % 100 == 0:
             utils.plot_training(all_rewards)
 
         if tau_count >= TAU:
